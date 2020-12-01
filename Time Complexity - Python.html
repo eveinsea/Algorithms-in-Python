@@ -1,0 +1,359 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<meta name="robots" content="index,nofollow">
+
+<title>TimeComplexity - Python Wiki</title>
+<script type="text/javascript" src="/wiki/common/js/common.js"></script>
+
+<script type="text/javascript">
+<!--
+var search_hint = "Search";
+//-->
+</script>
+
+
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="/wiki/europython/css/common.css">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="screen" href="/wiki/europython/css/screen.css">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="print" href="/wiki/europython/css/print.css">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="projection" href="/wiki/europython/css/projection.css">
+
+<!-- css only for MS IE6/IE7 browsers -->
+<!--[if lt IE 8]>
+   <link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="/wiki/europython/css/msie.css">
+<![endif]-->
+
+
+<link rel="alternate" title="Python Wiki: TimeComplexity" href="/moin/TimeComplexity?diffs=1&amp;show_att=1&amp;action=rss_rc&amp;unique=0&amp;page=TimeComplexity&amp;ddiffs=1" type="application/rss+xml">
+
+
+<link rel="Start" href="/moin/FrontPage">
+<link rel="Alternate" title="Wiki Markup" href="/moin/TimeComplexity?action=raw">
+<link rel="Alternate" media="print" title="Print View" href="/moin/TimeComplexity?action=print">
+<link rel="Search" href="/moin/FindPage">
+<link rel="Index" href="/moin/TitleIndex">
+<link rel="Glossary" href="/moin/WordIndex">
+<link rel="Help" href="/moin/HelpOnFormatting">
+</head>
+
+<body  lang="en" dir="ltr">
+
+<div id="header">
+
+<form id="searchform" method="get" action="/moin/TimeComplexity">
+<div>
+<input type="hidden" name="action" value="fullsearch">
+<input type="hidden" name="context" value="180">
+<label for="searchinput">Search:</label>
+<input id="searchinput" type="text" name="value" value="" size="20"
+    onfocus="searchFocus(this)" onblur="searchBlur(this)"
+    onkeyup="searchChange(this)" onchange="searchChange(this)" alt="Search">
+<input id="titlesearch" name="titlesearch" type="submit"
+    value="Titles" alt="Search Titles">
+<input id="fullsearch" name="fullsearch" type="submit"
+    value="Text" alt="Search Full Text">
+</div>
+</form>
+<script type="text/javascript">
+<!--// Initialize search form
+var f = document.getElementById('searchform');
+f.getElementsByTagName('label')[0].style.display = 'none';
+var e = document.getElementById('searchinput');
+searchChange(e);
+searchBlur(e);
+//-->
+</script>
+
+<div id="logo"><a href="/moin/FrontPage"></a><a href="http://www.python.org"><img src="/wiki/europython/img/python-logo.gif" alt="Python" ></a><a name="logo"></a></div>
+<div id="locationline">
+
+
+<ul id="pagelocation">
+<li><a href="/moin/TimeComplexity">TimeComplexity</a></li>
+</ul>
+
+</div>
+
+<ul id="pagetrail">
+<li><a href="/moin/TimeComplexity">TimeComplexity</a></li>
+</ul>
+</div>
+
+<div id="sidebar">
+<div id="star">
+
+</div>
+<div class="sidepanel">
+
+<ul id="navibar">
+<li class="wikilink"><a href="/moin/FrontPage">FrontPage</a></li><li class="wikilink"><a href="/moin/RecentChanges">RecentChanges</a></li><li class="wikilink"><a href="/moin/FindPage">FindPage</a></li><li class="wikilink"><a href="/moin/HelpContents">HelpContents</a></li><li class="current"><a href="/moin/TimeComplexity">TimeComplexity</a></li>
+</ul>
+
+</div>
+<div class="sidepanel">
+<h1>Page</h1>
+<ul class="editbar"><li><span class="disabled">Immutable Page</span></li><li class="toggleCommentsButton" style="display:none;"><a href="#" class="nbcomment" onClick="toggleComments();return false;">Comments</a></li><li><a class="nbinfo" href="/moin/TimeComplexity?action=info" rel="nofollow">Info</a></li><li><a class="nbattachments" href="/moin/TimeComplexity?action=AttachFile" rel="nofollow">Attachments</a></li><li>
+<form class="actionsmenu" method="GET" action="/moin/TimeComplexity">
+<div>
+    <label>More Actions:</label>
+    <select name="action"
+        onchange="if ((this.selectedIndex != 0) &&
+                      (this.options[this.selectedIndex].disabled == false)) {
+                this.form.submit();
+            }
+            this.selectedIndex = 0;">
+        <option value="raw">Raw Text</option>
+<option value="print">Print View</option>
+<option value="refresh">Delete Cache</option>
+<option value="show" disabled class="disabled">------------------------</option>
+<option value="SpellCheck">Check Spelling</option>
+<option value="LikePages">Like Pages</option>
+<option value="LocalSiteMap">Local Site Map</option>
+<option value="show" disabled class="disabled">------------------------</option>
+<option value="RenamePage" disabled class="disabled">Rename Page</option>
+<option value="DeletePage" disabled class="disabled">Delete Page</option>
+<option value="show" disabled class="disabled">------------------------</option>
+<option value="show" disabled class="disabled">------------------------</option>
+<option value="show" disabled class="disabled">Remove Spam</option>
+<option value="show" disabled class="disabled">Revert to this revision</option>
+<option value="show" disabled class="disabled">------------------------</option>
+<option value="SlideShow">SlideShow</option>
+    </select>
+    <input type="submit" value="Do">
+    
+</div>
+<script type="text/javascript">
+<!--// Init menu
+actionsMenuInit('More Actions:');
+//-->
+</script>
+</form>
+</li></ul>
+
+</div>
+<div class="sidepanel">
+<h1>User</h1>
+<ul id="username"><li><a href="/moin/TimeComplexity?action=login" id="login" rel="nofollow">Login</a></li></ul>
+</div>
+</div>
+
+<div id="page" lang="en" dir="ltr">
+<div dir="ltr" id="content" lang="en"><span class="anchor" id="top"></span>
+<span class="anchor" id="line-1"></span><p class="line874">This page documents the time-complexity (aka &quot;Big O&quot; or &quot;Big Oh&quot;) of various operations in current CPython. Other Python implementations (or older or still-under development versions of CPython) may have slightly different performance characteristics. However, it is generally safe to assume that they are not slower by more than a factor of O(log n). <span class="anchor" id="line-2"></span><span class="anchor" id="line-3"></span><p class="line874">Generally, 'n' is the number of elements currently in the container. 'k' is either the value of a parameter or the number of elements in the parameter. <span class="anchor" id="line-4"></span><span class="anchor" id="line-5"></span><p class="line867">
+<h1 id="list">list</h1>
+<span class="anchor" id="line-6"></span><p class="line874">The Average Case assumes parameters generated uniformly at random. <span class="anchor" id="line-7"></span><span class="anchor" id="line-8"></span><p class="line874">Internally, a list is represented as an array; the largest costs come from growing beyond the current allocation size (because everything must move), or from inserting or deleting somewhere near the beginning (because everything after that must move). If you need to add/remove at both ends, consider using a collections.deque instead. <span class="anchor" id="line-9"></span><div><table style="width: &amp;quot;&amp;quot"><tbody><tr>  <td><p class="line891"><strong>Operation</strong> </td>
+  <td><p class="line891"><strong>Average Case</strong> </td>
+  <td><p class="line891"><strong><a class="http" href="http://en.wikipedia.org/wiki/Amortized_analysis">Amortized Worst Case</a></strong> </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-10"></span><p class="line862">Copy </td>
+  <td><p class="line862">O(n) </td>
+  <td><p class="line862">O(n) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-11"></span><p class="line862">Append[1] </td>
+  <td><p class="line862">O(1) </td>
+  <td><p class="line862">O(1) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-12"></span><p class="line862">Pop last </td>
+  <td><p class="line862">O(1) </td>
+  <td><p class="line862">O(1) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-13"></span><p class="line862">Pop intermediate[2] </td>
+  <td><p class="line862">O(n) </td>
+  <td><p class="line862">O(n) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-14"></span><p class="line862">Insert </td>
+  <td><p class="line862">O(n) </td>
+  <td><p class="line862">O(n) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-15"></span><p class="line862">Get Item </td>
+  <td><p class="line862">O(1) </td>
+  <td><p class="line862">O(1) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-16"></span><p class="line862">Set Item </td>
+  <td><p class="line862">O(1) </td>
+  <td><p class="line862">O(1) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-17"></span><p class="line862">Delete Item </td>
+  <td><p class="line862">O(n) </td>
+  <td><p class="line862">O(n) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-18"></span><p class="line862">Iteration </td>
+  <td><p class="line862">O(n) </td>
+  <td><p class="line862">O(n) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-19"></span><p class="line862">Get Slice </td>
+  <td><p class="line862">O(k) </td>
+  <td><p class="line862">O(k) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-20"></span><p class="line862">Del Slice </td>
+  <td><p class="line862">O(n) </td>
+  <td><p class="line862">O(n) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-21"></span><p class="line862">Set Slice </td>
+  <td><p class="line862">O(k+n) </td>
+  <td><p class="line862">O(k+n) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-22"></span><p class="line862">Extend[1] </td>
+  <td><p class="line862">O(k) </td>
+  <td><p class="line862">O(k) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-23"></span><p class="line891"><a class="http" href="http://svn.python.org/projects/python/trunk/Objects/listsort.txt">Sort</a> </td>
+  <td><p class="line862">O(n log n) </td>
+  <td><p class="line862">O(n log n) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-24"></span><p class="line862">Multiply </td>
+  <td><p class="line862">O(nk) </td>
+  <td><p class="line862">O(nk) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-25"></span><p class="line862">x in s </td>
+  <td><p class="line862">O(n) </td>
+  <td><p class="line862"> </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-26"></span><p class="line862">min(s), max(s) </td>
+  <td><p class="line862">O(n) </td>
+  <td><p class="line862"> </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-27"></span><p class="line862">Get Length </td>
+  <td><p class="line862">O(1) </td>
+  <td><p class="line862">O(1) </td>
+</tr>
+</tbody></table></div><span class="anchor" id="line-28"></span><span class="anchor" id="line-29"></span><span class="anchor" id="line-30"></span><span class="anchor" id="line-31"></span><span class="anchor" id="line-32"></span><p class="line867">
+<h1 id="collections.deque">collections.deque</h1>
+<span class="anchor" id="line-33"></span><p class="line874">A deque (double-ended queue) is represented internally as a doubly linked list. (Well, a list of arrays rather than objects, for greater efficiency.) Both ends are accessible, but even looking at the middle is slow, and adding to or removing from the middle is slower still. <span class="anchor" id="line-34"></span><div><table style="width: &amp;quot;&amp;quot"><tbody><tr>  <td><p class="line891"><strong>Operation</strong> </td>
+  <td><p class="line891"><strong>Average Case</strong> </td>
+  <td><p class="line891"><strong>Amortized Worst Case</strong> </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-35"></span><p class="line862">Copy </td>
+  <td><p class="line862">O(n) </td>
+  <td><p class="line862">O(n) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-36"></span><p class="line862">append </td>
+  <td><p class="line862">O(1) </td>
+  <td><p class="line862">O(1) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-37"></span><p class="line862">appendleft </td>
+  <td><p class="line862">O(1) </td>
+  <td><p class="line862">O(1) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-38"></span><p class="line862">pop </td>
+  <td><p class="line862">O(1) </td>
+  <td><p class="line862">O(1) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-39"></span><p class="line862">popleft </td>
+  <td><p class="line862">O(1) </td>
+  <td><p class="line862">O(1) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-40"></span><p class="line862">extend </td>
+  <td><p class="line862">O(k) </td>
+  <td><p class="line862">O(k) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-41"></span><p class="line862">extendleft </td>
+  <td><p class="line862">O(k) </td>
+  <td><p class="line862">O(k) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-42"></span><p class="line862">rotate </td>
+  <td><p class="line862">O(k) </td>
+  <td><p class="line862">O(k) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-43"></span><p class="line862">remove </td>
+  <td><p class="line862">O(n) </td>
+  <td><p class="line862">O(n) </td>
+</tr>
+</tbody></table></div><span class="anchor" id="line-44"></span><span class="anchor" id="line-45"></span><span class="anchor" id="line-46"></span><span class="anchor" id="line-47"></span><span class="anchor" id="line-48"></span><p class="line867">
+<h1 id="set">set</h1>
+<span class="anchor" id="line-49"></span><p class="line874">See dict -- the implementation is intentionally very similar. <span class="anchor" id="line-50"></span><div><table><tbody><tr>  <td><p class="line891"><strong>Operation</strong> </td>
+  <td><p class="line891"><strong>Average case</strong> </td>
+  <td><p class="line891"><strong>Worst Case</strong> </td>
+  <td><p class="line891"><strong> notes </strong> </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-51"></span><p class="line862">x in s </td>
+  <td><p class="line862">O(1) </td>
+  <td><p class="line862">O(n) </td>
+  <td><p class="line862"> </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-52"></span><p class="line862">Union s|t </td>
+  <td><p class="line891"><a class="nonexistent" href="/moin/TimeComplexity_%28SetCode%29">O(len(s)+len(t))</a> </td>
+  <td><p class="line862"> </td>
+  <td><p class="line862"> </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-53"></span><p class="line862">Intersection s&amp;t </td>
+  <td><p class="line862">O(min(len(s), len(t)) </td>
+  <td><p class="line862">O(len(s) * len(t)) </td>
+  <td><p class="line862">replace &quot;min&quot; with &quot;max&quot; if t is not a set </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-54"></span><p class="line862">Multiple intersection s1&amp;s2&amp;..&amp;sn </td>
+  <td><p class="line862"> </td>
+  <td><p class="line862">(n-1)*O(l) where l is max(len(s1),..,len(sn)) </td>
+  <td><p class="line862"> </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-55"></span><p class="line862">Difference s-t </td>
+  <td><p class="line862">O(len(s)) </td>
+  <td><p class="line862"> </td>
+  <td><p class="line862"> </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-56"></span><p class="line862">s.difference_update(t) </td>
+  <td><p class="line862">O(len(t)) </td>
+  <td><p class="line862"> </td>
+  <td><p class="line862"> </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-57"></span><p class="line862">Symmetric Difference s^t </td>
+  <td><p class="line862">O(len(s)) </td>
+  <td><p class="line862">O(len(s) * len(t)) </td>
+  <td><p class="line862"> </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-58"></span><p class="line862">s.symmetric_difference_update(t) </td>
+  <td><p class="line862">O(len(t)) </td>
+  <td><p class="line862">O(len(t) * len(s)) </td>
+  <td><p class="line862"> </td>
+</tr>
+</tbody></table></div><span class="anchor" id="line-59"></span><span class="anchor" id="line-60"></span><span class="anchor" id="line-61"></span><span class="anchor" id="line-62"></span><span class="anchor" id="line-63"></span><ul><li><p class="line862">As seen in the <a class="https" href="https://github.com/python/cpython/blob/master/Objects/setobject.c">source code</a> the complexities for set difference s-t or s.difference(t) (<tt>set_difference()</tt>) and in-place set difference s.difference_update(t) (<tt>set_difference_update_internal()</tt>) are different! The first one is O(len(s)) (for every element in s add it to the new set, if not in t). The second one is O(len(t)) (for every element in t remove it from s). So care must be taken as to which is preferred, depending on which one is the longest set and whether a new set is needed. <span class="anchor" id="line-64"></span></li><li>To perform set operations like s-t, both s and t need to be sets. However you can do the method equivalents even if t is any iterable, for example s.difference(l), where l is a list. <span class="anchor" id="line-65"></span><span class="anchor" id="line-66"></span></li></ul><p class="line867">
+<h1 id="dict">dict</h1>
+<span class="anchor" id="line-67"></span><p class="line874">The Average Case times listed for dict objects assume that the hash function for the objects is sufficiently robust to make collisions uncommon. The Average Case assumes the keys used in parameters are selected uniformly at random from the set of all keys. <span class="anchor" id="line-68"></span><span class="anchor" id="line-69"></span><p class="line874">Note that there is a fast-path for dicts that (in practice) only deal with str keys; this doesn't affect the algorithmic complexity, but it can significantly affect the constant factors: how quickly a typical program finishes. <span class="anchor" id="line-70"></span><div><table style="width: &amp;quot;&amp;quot"><tbody><tr>  <td><p class="line891"><strong>Operation</strong> </td>
+  <td><p class="line891"><strong>Average Case</strong> </td>
+  <td><p class="line891"><strong>Amortized Worst Case</strong> </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-71"></span><p class="line862">k in d </td>
+  <td><p class="line862">O(1) </td>
+  <td><p class="line862">O(n) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-72"></span><p class="line862">Copy[3] </td>
+  <td><p class="line862">O(n) </td>
+  <td><p class="line862">O(n) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-73"></span><p class="line862">Get Item </td>
+  <td><p class="line862">O(1) </td>
+  <td><p class="line862">O(n) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-74"></span><p class="line862">Set Item[1] </td>
+  <td><p class="line862">O(1) </td>
+  <td><p class="line862">O(n) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-75"></span><p class="line862">Delete Item </td>
+  <td><p class="line862">O(1) </td>
+  <td><p class="line862">O(n) </td>
+</tr>
+<tr>  <td><span class="anchor" id="line-76"></span><p class="line862">Iteration[3] </td>
+  <td><p class="line862">O(n) </td>
+  <td><p class="line862">O(n) </td>
+</tr>
+</tbody></table></div><span class="anchor" id="line-77"></span><span class="anchor" id="line-78"></span><span class="anchor" id="line-79"></span><span class="anchor" id="line-80"></span><span class="anchor" id="line-81"></span><p class="line867">
+<h1 id="Notes">Notes</h1>
+<span class="anchor" id="line-82"></span><p class="line874">[1] = These operations rely on the &quot;Amortized&quot; part of &quot;Amortized Worst Case&quot;. Individual actions may take surprisingly long, depending on the history of the container. <span class="anchor" id="line-83"></span><span class="anchor" id="line-84"></span><p class="line862">[2] = Popping the intermediate element at index <strong>k</strong> from a list of size <strong>n</strong> shifts all elements <em>after</em> <strong>k</strong> by one slot to the left using memmove. <strong>n - k</strong> elements have to be moved, so the operation is <strong>O(n - k)</strong>. The best case is popping the second to last element, which necessitates one move, the worst case is popping the first element, which involves <strong>n - 1</strong> moves. The average case for an average value of <strong>k</strong> is popping the element the middle of the list, which takes <strong>O(n/2) = O(n)</strong> operations. <span class="anchor" id="line-85"></span><span class="anchor" id="line-86"></span><p class="line862">[3] = For these operations, the worst case <em>n</em> is the maximum size the container ever achieved, rather than just the current size. For example, if N objects are added to a dictionary, then N-1 are deleted, the dictionary will still be sized for N objects (at least) until another insertion is made. <span class="anchor" id="line-87"></span><span class="anchor" id="bottom"></span></div><p id="pageinfo" class="info" lang="en" dir="ltr">TimeComplexity  (last edited 2020-08-18 05:23:02 by <span title="JanChristophTerasa @ ip5f5be13e.dynamic.kabel-deutschland.de[95.91.225.62]"><a class="nonexistent" href="/moin/JanChristophTerasa" title="JanChristophTerasa @ ip5f5be13e.dynamic.kabel-deutschland.de[95.91.225.62]">JanChristophTerasa</a></span>)</p>
+
+<div id="pagebottom"></div>
+</div>
+
+
+<div id="footer">
+<ul id="credits">
+<li><a href="http://moinmo.in/" title="This site uses the MoinMoin Wiki software.">MoinMoin Powered</a></li><li><a href="http://moinmo.in/Python" title="MoinMoin is written in Python.">Python Powered</a></li><li><a href="http://moinmo.in/GPL" title="MoinMoin is GPL licensed.">GPL licensed</a></li><li><a href="http://validator.w3.org/check?uri=referer" title="Click here to validate this page.">Valid HTML 4.01</a></li>
+</ul>
+
+
+</div>
+<p style="text-align: center; font-size: 85%"><a href="/moin/FrontPage#use">Unable to edit the page? See the FrontPage for instructions.</a></p></body>
+</html>
+
