@@ -1,0 +1,132 @@
+341. Flatten Nested List Iterator <M><M>
+
+Given a nested list of integers, implement an iterator to flatten it.
+Each element is either an integer, or a list -- whose elements may also be integers or other lists.
+
+Example 1:
+Input: [[1,1],2,[1,1]]
+Output: [1,1,2,1,1]
+Explanation: By calling next repeatedly until hasNext returns false, 
+             the order of elements returned by next should be: [1,1,2,1,1].
+Example 2:
+Input: [1,[4,[6]]]
+Output: [1,4,6]
+Explanation: By calling next repeatedly until hasNext returns false, 
+             the order of elements returned by next should be: [1,4,6].
+
+# """
+# This is the interface that allows for creating nested lists.
+# You should not implement it, or speculate about its implementation
+# """
+#class NestedInteger:
+#    def isInteger(self) -> bool:
+#        """
+#        @return True if this NestedInteger holds a single integer, rather than a nested list.
+#        """
+#
+#    def getInteger(self) -> int:
+#        """
+#        @return the single integer that this NestedInteger holds, if it holds a single integer
+#        Return None if this NestedInteger holds a nested list
+#        """
+#
+#    def getList(self) -> [NestedInteger]:
+#        """
+#        @return the nested list that this NestedInteger holds, if it holds a nested list
+#        Return None if this NestedInteger holds a single integer
+#        """
+
+# Your NestedIterator object will be instantiated and called as such:
+# i, v = NestedIterator(nestedList), []
+# while i.hasNext(): v.append(i.next())
+
+class NestedIterator:
+    def __init__(self, nestedList: [NestedInteger]):
+    
+    def next(self) -> int:
+
+    def hasNext(self) -> bool:
+    
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+Hidden Info:
+1. Call hasNext() first and then call next() each time
+2. nested item may be [], eg. [[],[3]]
+
+Idea:
+If we flatten the item (nestedInteger) in the nestedList, and then put each result back in the original 
+order, we can get the final result. The iterator only needs to traverse this final result simply.
+For each item (nestedInteger) in the nestedList, the flattening process will continue to dive into the 
+nested items until there are no more nested items. This is a DFS operation. 
+When we collect the results of each nested item, it is divide and conquer.
+
+Solutions:
+Approach 1: once flatten, DFS/recursion + array, average O(1), O(n)
+#n is the number of all integers in nestedList. 
+class NestedIterator:
+    def __init__(self, nestedList: [NestedInteger]):
+        self.myList = []
+        self.flatten(nestedList)
+        self.idx = 0
+    
+    def next(self) -> int:
+        tmp = self.myList[self.idx]
+        self.idx += 1
+        return tmp
+        
+    def hasNext(self) -> bool:
+        return self.idx < len(self.myList)
+    
+    def flatten(self, nestedList):
+        for l in nestedList:
+            if l.isInteger():
+                self.myList.append(l.getInteger())
+            else:
+                self.flatten(l.getList())
+                
+Approach 2: flatten on the fly, DFS/iteration + stack, average O(1), O(n)
+#key points: reverse the lists before put them into the stack
+class NestedIterator:
+    def __init__(self, nestedList: [NestedInteger]):
+        self.stack = nestedList[::-1]
+    
+    def next(self) -> int:
+        return self.stack.pop().getInteger()
+
+    def hasNext(self) -> bool:
+        #make the top item in the stack is an integer
+        while self.stack and not self.stack[-1].isInteger():
+            curr = self.stack.pop()
+            lst = curr.getList()
+            self.stack += lst[::-1]
+        return self.stack
+        
+Approach 3: flatten on the fly, DFS/recursion + deque, average O(1), O(d)
+#d is the depth of recursion
+from collections import deque
+class NestedIterator:
+    def __init__(self, nestedList: [NestedInteger]):
+        self.list = nestedList
+        self.dq = deque()
+        self.idx = 0
+    
+    def next(self) -> int:
+        return self.dq.popleft()
+
+    def hasNext(self) -> bool:
+        while self.idx < len(self.list) and not self.dq:
+            self.dq += self.flatten(self.list[self.idx])
+            self.idx += 1
+        return self.dq
+                        
+    def flatten(self, nestedInt):
+        if not nestedInt:
+            return []
+        
+        ans = []
+        if nestedInt.isInteger():
+            ans.append(nestedInt.getInteger())
+        else:
+            for item in nestedInt.getList():
+                ans += self.flatten(item)
+        return ans
