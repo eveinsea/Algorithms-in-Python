@@ -54,7 +54,29 @@ Your code should preferably run in O(n) time and use only O(1) memory.
 
 ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 
-Idea:
+*Idea I*
+If there is intersection between two linked list, they must share some nodes.
+How to efficiently find the duplicated nodes in the two linked list?
+
+Approach 1: hashset, O(m+n), O(max(m, n))
+Refer to LeetCode 141. Linked List Cycle
+class Solution:
+    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:
+        if not headA or not headB:
+            return None
+        
+        hs = set()
+        curr = headA
+        while curr:
+            hs.add(curr)
+            curr = curr.next
+        
+        curr = headB
+        while curr and curr not in hs:
+            curr = curr.next
+        return curr
+
+*Idea II*
 When we check two linked lists of the same length and compare the pairs of nodes at the same position one-to-one, 
 we must be able to find the intersection if it exists.
 If the lengths of the two linked lists are different, how to find such a starting node (make the sublists the same 
@@ -63,8 +85,7 @@ If there is an intersection in the two linked lists (no cycle), the sublists aft
 same (in terms of node, length, etc.) This means that at the beginning, the extra nodes in the longer linked list 
 must not be the intersection and we can discard them.
 
-Solutions:
-Approach 1: discard the leading nodes with counting, two pointers, O(m+n), O(1)
+Approach 2: discard the leading nodes with counting, two pointers, O(m+n), O(1)
 class Solution:
     def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:
         if not headA or not headB:
@@ -101,7 +122,7 @@ class Solution:
             curr = curr.next
         return n
         
-Approach 2: exchange traversal, two pointers, O(m+n), O(1)
+Approach 3: exchange traversal, two pointers, O(m+n), O(1)
 Assume listA is longer than listB in general, we have two lists M, N:
 M = listA + listB
 N = listB + listA
