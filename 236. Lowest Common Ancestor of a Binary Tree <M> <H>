@@ -68,6 +68,7 @@ new pointer, pointing to parent from current node, we call it parent pointer in 
 
 Approach 1: DFS/iteration + parent pointer, O(n), O(n)
 #modify the original tree
+#DFS/recursion and BFS work well here
 class Solution:    
     def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
         #add parent pointers for each node in the tree
@@ -104,7 +105,7 @@ class Solution:
             return None
         
         #DFS/iteration, find directly parents for p and q 
-        #DFS/recursion works well, too (refer to Approach 1). 
+        #DFS/recursion and BFS work well, too (refer to Approach 1). 
         #But DFS/iteration is easier to early return when find p and q
         hm = {root: None}
         stack = [root]
@@ -163,3 +164,6 @@ class Solution:
         if left and right:
             return root
         return left if left else right
+        
+Other approaches:
+refer to Leetcode 1644. Lowest Common Ancestor of a Binary Tree II
