@@ -1,0 +1,78 @@
+141. Linked List Cycle <E> <M>
+
+Given head, the head of a linked list, determine if the linked list has a cycle in it.
+There is a cycle in a linked list if there is some node in the list that can be reached again by 
+continuously following the next pointer. Internally, pos is used to denote the index of the node 
+that tail's next pointer is connected to. Note that pos is not passed as a parameter.
+Return true if there is a cycle in the linked list. Otherwise, return false.
+ 
+Example 1:
+3 --> 2 --> 0 --> -4
+      ^            |
+      |____________|
+Input: head = [3,2,0,-4], pos = 1
+Output: true
+Explanation: There is a cycle in the linked list, where the tail connects to the 1st node (0-indexed).
+
+Example 2:
+1 --> 2
+^     |
+|_____|
+Input: head = [1,2], pos = 0
+Output: true
+Explanation: There is a cycle in the linked list, where the tail connects to the 0th node.
+
+Example 3:
+1
+Input: head = [1], pos = -1
+Output: false
+Explanation: There is no cycle in the linked list. 
+
+Constraints:
+The number of the nodes in the list is in the range [0, 104].
+-105 <= Node.val <= 105
+pos is -1 or a valid index in the linked-list. 
+
+Follow up: Can you solve it using O(1) (i.e. constant) memory?
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+Idea:
+If there is a cycle in the linked list, when we move forward along the next pointers, we must visit the same 
+node again. How to efficiently recognize that we're re-visiting the same node? A directly methood is to record
+every node visited in a the hash table.
+
+Solutions:
+Approach 1: hashset, O(n), O(n)
+class Solution:
+    def hasCycle(self, head: ListNode) -> bool:
+        hs = set()
+        while head:
+            if head in hs:
+                return True
+            hs.add(head)
+            head = head.next
+        return False
+        
+Follow up: Can you solve it using O(1) (i.e. constant) memory?   
+Recall Leetcode 876. Middle of the Linked List
+Two pointers, fast and slow start from head at the same time, fast move 2 steps and slow move 1 steps in one 
+action, when fast arrive the end, slow stop at the middle of the linked list.
+If there is a cycle in the linked list, fast and slow will enter the cycle one after another and eventually 
+meet at a node.
+Approach 2: two pointers -- slow & fast pointers (Floyd's Tortoise and Hare), O(n), O(1)
+class Solution:
+    def hasCycle(self, head: ListNode) -> bool:
+        slow, fast = head, head
+        while fast and fast.next:
+            fast = fast.next.next
+            slow = slow.next
+            if slow == fast:
+                return True
+        return False
