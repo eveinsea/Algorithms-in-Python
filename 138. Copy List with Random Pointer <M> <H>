@@ -1,0 +1,96 @@
+138. Copy List with Random Pointer
+
+A linked list is given such that each node contains an additional random pointer which could point 
+to any node in the list or null. Return a deep copy of the list.
+The Linked List is represented in the input/output as a list of n nodes. Each node is represented as 
+a pair of [val, random_index] where:
+val: an integer representing Node.val
+random_index: the index of the node (range from 0 to n-1) where random pointer points to, or null if 
+it does not point to any node. 
+
+Example 1:
+Input: head = [[7,null],[13,0],[11,4],[10,2],[1,0]]
+Output: [[7,null],[13,0],[11,4],[10,2],[1,0]]
+
+Example 2:
+Input: head = [[1,1],[2,1]]
+Output: [[1,1],[2,1]]
+
+Example 3:
+Input: head = [[3,null],[3,0],[3,null]]
+Output: [[3,null],[3,0],[3,null]]
+
+Example 4:
+Input: head = []
+Output: []
+Explanation: Given linked list is empty (null pointer), so return null. 
+
+Constraints:
+-10000 <= Node.val <= 10000
+Node.random is null or pointing to a node in the linked list.
+The number of nodes will not exceed 1000.
+
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+Idea:
+If we deep copy a normal single linked list, we only need to copy and link new nodes one by one.
+When we deep copy a linked list with random pointer, we may follow the next and random pointers at the 
+same time, copy and link the corresponding nodes for them. It's the idea of DFS. Because we don't know 
+where and how far/deep the random pointer will go, there are some duplicated work to do. We can use 
+caching to avoid it.
+If we skip out of the complicated relationship in the linked list with random pointer and simply check 
+the nodes in this list and the nodes pointed by random pointer, we find the former must include the 
+latter. So we can split the copy into two steps:
+1. copy all the nodes
+2. copy all the pointers (next and random)
+Then only one problem left here -- how to find the copy node of one original node efficiently?
+
+Solutions:
+Approach 1: hashmap + 2 pass, O(n), O(n)
+class Solution:
+    def copyRandomList(self, head: 'Node') -> 'Node':
+        if not head:
+            return None
+            
+        mapping = {}
+        
+        #1. copy nodes
+        curr = head
+        while curr:
+            mapping[curr] = Node(curr.val)
+            curr = curr.next
+            
+        #2. copy pointers
+        for node in mapping:
+            if node.next:
+                mapping[node].next = mapping[node.next]
+            if node.random:
+                mapping[node].random = mapping[node.random]
+                
+        return mapping[head]
+
+Approach 2: clone nodes in-place + 2 pass, O(n), O(n)
+class Solution:
+    def copyRandomList(self, head: 'Node') -> 'Node':
+        if not head:
+            return None
+        
+        #1. copy nodes in-place
+        curr = head
+        while curr:
+            new_node = Node(curr.val)
+            new_node.next = curr.next
+            curr.next = new_node
+            curr = new_node.next
+            
+        #2. build new linked list and copy random pointers
+        dummy = Node(0)
+        curr, curr2 = head, dummy
+        while curr:
+            curr2.next = curr.next
+            curr2 = curr.next
+            if curr.random:
+                curr2.random = curr.random.next
+            curr = curr2.next
+            
+        return dummy.next
