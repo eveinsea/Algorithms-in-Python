@@ -1,0 +1,165 @@
+236. Lowest Common Ancestor of a Binary Tree <M> <H>
+
+Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in the tree.
+According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between 
+two nodes p and q as the lowest node in T that has both p and q as descendants (where we allow 
+a node to be a descendant of itself).”
+ 
+Example 1:
+           3
+         /   \
+        5     1
+       / \   / \
+      6   2 0   8
+         / \
+        7   4
+Input: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1
+Output: 3
+Explanation: The LCA of nodes 5 and 1 is 3.
+
+Example 2:
+           3
+         /   \
+        5     1
+       / \   / \
+      6   2 0   8
+         / \
+        7   4
+Input: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 4
+Output: 5
+Explanation: The LCA of nodes 5 and 4 is 5, since a node can be a descendant of itself according 
+to the LCA definition.
+
+Example 3:
+    1
+   /
+  2
+Input: root = [1,2], p = 1, q = 2
+Output: 1 
+
+Constraints:
+The number of nodes in the tree is in the range [2, 105].
+-10^9 <= Node.val <= 10^9
+All Node.val are unique.
+p != q
+p and q will exist in the tree.
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+*Idea I*
+Whatever we want to do, find the nodes p and q in the tree fist.
+When we find them, we've collect the path info at the same time.
+Now the problem be converted to find the intersection of two linked list (must exist only one!)
+      |--> p
+r --> i 
+      |--> q
+Recall Leetcode 160. Intersection of Two Linked Lists, after reversing the pointers, they're the same.
+We have three approaches to find the intersection in such two linked list -- 
+  (1) hashset, (2) discarding leading nodes with counting, (3) exchange traverse
+Now the key point is how to efficiently reverse the pointers without distroy the tree. Here we add a 
+new pointer, pointing to parent from current node, we call it parent pointer in a tree.
+
+Approach 1: DFS/iteration + parent pointer, O(n), O(n)
+#modify the original tree
+class Solution:    
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        #add parent pointers for each node in the tree
+        self.addParent(root, None, p, q)
+        
+        #find the intersection in two linked list (p --> root, q --> root)
+        #refer to Leetcode 160, we pick the hashset approach
+        #you can implement the same function with the other two approaches in Leetcode 160
+        #find all parents for p (all nodes in the path p --> root)
+        hs = set()
+        curr = p
+        while curr:
+            hs.add(curr.val)
+            curr = curr.parent
+        curr = q
+        while curr.val not in hs:
+            curr = curr.parent
+        return curr
+        
+    def addParent(self, node, parent, p, q):
+        if not node:
+            return
+        node.parent = parent
+        self.addParent(node.left, node, p, q)
+        self.addParent(node.right, node, p, q)
+        
+Approach 2: DFS/iteration + parent pointer/hashmap, O(n), O(n)
+without detroy the original tree, use an extra data structure to store the parent pointers for each 
+node in the tree
+linked list works well if you make a copy for the nodes in the path and link them with next pointers
+class Solution:    
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        if not root:
+            return None
+        
+        #DFS/iteration, find directly parents for p and q 
+        #DFS/recursion works well, too (refer to Approach 1). 
+        #But DFS/iteration is easier to early return when find p and q
+        hm = {root: None}
+        stack = [root]
+        while p not in hm or q not in hm:
+            curr = stack.pop()
+            if curr.left:
+                hm[curr.left] = curr
+                stack.append(curr.left)
+            if curr.right:
+                hm[curr.right] = curr
+                stack.append(curr.right)
+        
+        #hashset, find intersection of the two pathes, Leetcode 160
+        #find all parents for p (all nodes in the path p --> root)
+        hs = set()
+        while p:
+            hs.add(p)
+            p = hm[p]
+            
+        #check if the parents of q in hs, bottom up
+        while q and q not in hs:
+            q = hm[q]
+            
+        return q
+        
+*Idea II*
+Refer to Leetcode 235. Lowest Common Ancestor of a Binary Search Tree
+If we know if p or q exist in current subtree, we know how to narrow our search
+(1) if p and q both exist in the left subtree, the LCA must in the left subtree
+(2) if p and q both exist in the right subtree, the LCA must in the right subtree
+(3) if p and q exist in the left and right subtrees respectively, the current node is the LCA
+It's a process of DFS from top to bottom.
+But in a general binary tree, check if a node in a subtree will cost O(n), then we cost O(n^2) 
+for LCA in total. There is duplicated work here. Caching can help to improve the performance.
+
+Change our viewpoint, think about it again from bottom up.
+When we traverse a tree with DFS, we can easily get the information of the subtree
+If we know how many target nodes founed in the subtree, we can get the LCA
+(1) if there is one target node found in every subtree respectively, the current node is the LCA
+(2) otherwise, we can't make the decision, return the current result to the upper call
+    (2.1) find one or two nodes in left subtree, return left
+    (2.2) find one or two nodes in right subtree, return right
+    (2.3) otherwise, return Null
+It's a process of divide and conquer.
+
+Approach 3: DFS/recursion/divide and conquer, O(n), O(n)
+class Solution:    
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        if not root:
+            return None
+        if root.val == p.val or root.val == q.val:
+            return root
+        
+        left = self.lowestCommonAncestor(root.left, p, q)
+        right = self.lowestCommonAncestor(root.right, p, q)
+        if left and right:
+            return root
+        return left if left else right
