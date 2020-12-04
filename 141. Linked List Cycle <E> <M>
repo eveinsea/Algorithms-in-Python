@@ -43,12 +43,11 @@ Follow up: Can you solve it using O(1) (i.e. constant) memory?
 
 ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 
-Idea:
+*Idea I*
 If there is a cycle in the linked list, when we move forward along the next pointers, we must visit the same 
 node again. How to efficiently recognize that we're re-visiting the same node? A directly methood is to record
 every node visited in a the hash table.
 
-Solutions:
 Approach 1: hashset, O(n), O(n)
 class Solution:
     def hasCycle(self, head: ListNode) -> bool:
@@ -60,12 +59,15 @@ class Solution:
             head = head.next
         return False
         
+
 Follow up: Can you solve it using O(1) (i.e. constant) memory?   
+*Idea II*
 Recall Leetcode 876. Middle of the Linked List
 Two pointers, fast and slow start from head at the same time, fast move 2 steps and slow move 1 steps in one 
 action, when fast arrive the end, slow stop at the middle of the linked list.
 If there is a cycle in the linked list, fast and slow will enter the cycle one after another and eventually 
 meet at a node.
+
 Approach 2: two pointers -- slow & fast pointers (Floyd's Tortoise and Hare), O(n), O(1)
 class Solution:
     def hasCycle(self, head: ListNode) -> bool:
