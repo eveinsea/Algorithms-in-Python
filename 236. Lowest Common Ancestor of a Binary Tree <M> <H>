@@ -169,4 +169,5 @@ class Solution:
         return left if left else right
         
 Other approaches:
-refer to Leetcode 1644. Lowest Common Ancestor of a Binary Tree II
+Refer to Leetcode 1644. Lowest Common Ancestor of a Binary Tree II
+Approach 3 ~ Approach 6
