@@ -151,7 +151,7 @@ If we know how many target nodes founed in the subtree, we can get the LCA
     (2.3) otherwise, return Null
 It's a process of divide and conquer.
 
-Approach 3: DFS/recursion/divide and conquer, O(n), O(n)
+Approach 3: DFS/recursion/divide and conquer + early return, O(n), O(n)
 #early return when we find either of two nodes (the other target node is incluede in the subtree or not)
 #because the premise ensure both target nodes exist in the tree
 #if we find only one target node, it will be the LCA (the other one is its decendant)
