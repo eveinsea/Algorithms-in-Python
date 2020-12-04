@@ -1,0 +1,136 @@
+142. Linked List Cycle II <M> <M>
+
+Given a linked list, return the node where the cycle begins. If there is no cycle, return null.
+There is a cycle in a linked list if there is some node in the list that can be reached again by 
+continuously following the next pointer. Internally, pos is used to denote the index of the node 
+that tail's next pointer is connected to. Note that pos is not passed as a parameter.
+Notice that you should not modify the linked list. 
+
+Example 1:
+3 --> 2 --> 0 --> -4
+      ^            |
+      |____________|
+Input: head = [3,2,0,-4], pos = 1
+Output: tail connects to node index 1
+Explanation: There is a cycle in the linked list, where tail connects to the second node.
+
+Example 2:
+1 --> 2
+^     |
+|_____|
+Input: head = [1,2], pos = 0
+Output: tail connects to node index 0
+Explanation: There is a cycle in the linked list, where tail connects to the first node.
+
+Example 3:
+1
+Input: head = [1], pos = -1
+Output: no cycle
+Explanation: There is no cycle in the linked list.
+ 
+Constraints:
+The number of the nodes in the list is in the range [0, 104].
+-10^5 <= Node.val <= 10^5
+pos is -1 or a valid index in the linked-list. 
+
+Follow up: Can you solve it using O(1) (i.e. constant) memory?
+
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+*Idea I*
+Refer to Leetcode 141. Linked List Cycle
+Hashset woks well here.
+
+Approach 1: Hashset, O(n), O(n)
+class Solution:
+    def detectCycle(self, head: ListNode) -> ListNode:
+        hs = set()
+        curr = head
+        while curr:
+            if curr in hs:
+                return curr
+            hs.add(curr)
+            curr = curr.next
+        return None
+        
+Follow up: Can you solve it using O(1) (i.e. constant) memory?
+*Idea II*
+Refer to Leetcode 141. Linked List Cycle
+Make use of two pointers (slow and fast), we can determine if the linked list has a cycle.
+Next, how to find the entry of cycle?
+Start --> Entry --> x --> Meet
+          ^                |
+          |-------- y <----|
+
+Approach 2: two pointers, cut the cycle + find intersection, O(n), O(1)
+If we cut the cycle at 'Meet', we get two linked list and they intersect at 'Entry'
+      Start --> Entry --> x --> Meet
+                  ^ 
+Meet.next --> y --|
+The problem is convert to find the intersection of two linked list
+Refer to LeetCode 160. Intersection of Two Linked Lists, we have three method:
+(1) hashset, (2) discard leading nodes with counting, (3) exchange traverse
+class Solution:
+    def detectCycle(self, head: ListNode) -> ListNode:
+        meet = self.findCycle(head)
+        if not meet:
+            return None
+        head2 = meet.next
+        meet.next = None
+        ans = self.findIntersection(head, head2)
+        meet.next = head2
+        return ans
+        
+    def findCycle(self, head):
+        slow, fast = head, head
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+            if slow == fast:
+                return slow
+        return None
+        
+    def findIntersection(self, head1, head2):
+        curr1, curr2 = head1, head2
+        while curr1 != curr2:
+            if not curr1:
+                curr1 = head2
+            else:
+                curr1 = curr1.next
+            if not curr2:
+                curr2 = head1
+            else:
+                curr2 = curr2.next
+        return curr1
+
+Approach 3: two pointers, Math derivation, O(n), O(1)
+No modification on the linked list.
+Start -- f --> Entry -- a --> Meet
+                ^               |
+                |------ b ------|
+let f is distance from 'Start' to 'Entry', a is distance from 'Entry' to 'Meet', b is 
+distance from 'Meet' to 'Entry', because Dslow * 2 = Dfast, then
+(f + a + mC) * 2 = f + a + nC, (C = a + b) ==> f + a = xC ==> f = x'C + b
+It means if we have two pointers p1 and p2 with the same speed which start from 'Start' 
+and 'Meet' at the same time, p1 and p2 must meet on 'Entry'
+class Solution:
+    def detectCycle(self, head: ListNode) -> ListNode:
+        #find intersection if it exists
+        meet = self.findCycle(head)
+        if not meet:
+            return None
+        
+        #find the entry node if cycle exists
+        start = head
+        while start != meet:
+            start = start.next
+            meet = meet.next
+        return start
+    
+    def findCycle(self, head):
+        slow, fast = head, head
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+            if slow == fast:
+                return slow
+        return None
