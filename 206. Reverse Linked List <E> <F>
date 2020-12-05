@@ -17,9 +17,8 @@ A linked list can be reversed either iteratively or recursively. Could you imple
 
 ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 
-Key point:
-#single linked list
-#no cycle
+Hidden conditions:
+no cycle
 
 *Idea I*
 demo/visualize the progress
