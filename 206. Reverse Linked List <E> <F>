@@ -1,0 +1,71 @@
+206. Reverse Linked List <E> <F>
+
+Reverse a singly linked list.
+
+Example:
+Input: 1->2->3->4->5->NULL
+Output: 5->4->3->2->1->NULL
+Follow up:
+
+A linked list can be reversed either iteratively or recursively. Could you implement both?
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+Key point:
+#single linked list
+#no cycle
+
+*Idea I*
+demo/visualize the progress
+input:     1   >   2   >   3   >   null
+output:    3   >   2   >   1   >   null
+
+prev        curr    nxt
+null        1   >   2   >   3   >   null
+            prev    curr    nxt
+null    <   1       2   >   3   >   null
+                    prev    curr    nxt
+null    <   1   <   2       3   >   null
+                            prev    curr
+                                    nxt     #curr==null, stop here
+null    <   1   <   2   <   3       null
+When we stop, prev is the new head, return prev
+
+Approach 1: iteration, O(n), O(1)
+#assitant pointer prev
+class Solution:
+    def reverseList(self, head: ListNode) -> ListNode:
+        if not head:
+            return head
+        
+        prev, curr = None, head
+        while curr:
+            tmp = curr.next
+            curr.next = prev
+            prev, curr = curr, tmp
+        return prev
+
+*Idea II*
+Imagine the linked list is a tree with only one branch, traverse the tree with the idea of divide and conquer
+At current node, we've finished the reverse of its subtree, now we only need to reverse the pointer between 
+curr and its subtree, and then return the head of new list
+Key point: we need the head (as head of new list) and tail (point to current node) at the same time
+
+Approach 2: recursion, O(n), O(n)
+class Solution:
+    def reverseList(self, head: ListNode) -> ListNode:
+        if not head or not head.next:
+            return head
+        head2 = self.reverseList(head.next)
+        head.next.next = head
+        head.next = None
+        return head2
+
+
+
