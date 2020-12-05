@@ -1,0 +1,120 @@
+92. Reverse Linked List II <M> <F>
+
+Reverse a linked list from position m to n. Do it in one-pass.
+Note: 1 ≤ m ≤ n ≤ length of list.
+
+Example:
+Input: 1->2->3->4->5->NULL, m = 2, n = 4
+Output: 1->4->3->2->5->NULL
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+Hidden conditions:
+1. single linked list
+2. no cycle
+
+*Idea I*
+Refer to LeetCode 206. Reverse Linked List
+the difference is only to reverse a part of the linked list here
+1. find the position of m and n
+2. split the linked list to three sublists, (head1, tail1), (head2(m), tail2(n)), (head3, tail3)
+2. reverse the sublist between m and n (including m and n)
+3. re-joint the reversed sublist to the original position
+key point:
+1. use dummy node to deal with the condition of m = 1 (reverse from head)
+2. reverseList() return head and tail for re-joint at the same time
+
+Approach 1: split and re-joint/recursion, O(n), O(n)
+class Solution:
+    def reverseBetween(self, head: ListNode, m: int, n: int) -> ListNode:
+        if not head or m == n:
+            return head
+        
+        dummy = ListNode()
+        dummy.next = head
+        
+        n -= m
+        curr = head
+        tail1 = dummy
+        while m > 1:
+            tail1 = curr
+            curr = curr.next
+            m -= 1
+        tail1.next = None
+        
+        head2 = curr
+        while n:
+            curr = curr.next
+            n -= 1
+        head3 = curr.next
+        curr.next = None
+        
+        head2, tail2 = self.reverseList(head2)
+        tail1.next = head2
+        tail2.next = head3
+        return dummy.next
+    
+    def reverseList(self, head):
+        if not head or not head.next:
+            return head, head
+        head2, tail2 = self.reverseList(head.next)
+        tail2.next = head
+        head.next = None
+        return head2, head
+        
+Approach 2: split and re-joint/iteration, O(n), O(1)
+    def reverseList(self, head):
+        if not head or not head.next:
+            return head, head
+        prev, curr = None, head
+        while curr:
+            tmp = curr.next
+            curr.next = prev
+            prev, curr = curr, tmp
+        return prev, head
+
+*Idea II*
+Finish reverse in exactly one pass
+
+Approach 3: iteration, one pass, O(n), O(1)
+class Solution:
+    def reverseBetween(self, head: ListNode, m: int, n: int) -> ListNode:
+        if not head or m == n:
+            return head
+        
+        dummy = ListNode(0)
+        dummy.next = head
+        
+        #find the starting node of reverse
+        #record the tail of the unchanged sublist before m
+        #record the tail of the sublist between m and n
+        tail1, curr = dummy, head
+        n -= m
+        while m > 1:
+            tail1 = curr
+            curr = curr.next
+            m -= 1
+            
+        #early return
+        if not curr:
+            return head
+        tail2 = curr
+        
+        #reverse the sublist between m and n (including m and n)
+        prev = None
+        while n >= 0:
+            tmp = curr.next
+            curr.next = prev
+            prev, curr = curr, tmp
+            n -= 1
+            
+        #re-construct the list
+        tail1.next = prev
+        tail2.next = curr
+        return dummy.next
