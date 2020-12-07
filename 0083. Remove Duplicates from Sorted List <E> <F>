@@ -20,7 +20,7 @@ Output: 1->2->3
 
 *Idea*
 In a sorted linked list, simply compare the two adjacent nodes, we can find the duplicates.
-For the duplicates with the same value, we reserve one node and remode all other nodes. 
+For the duplicates with the same value, we reserve one node and remove all other nodes. 
 That means, we can delete the latter node when we find two duplicated nodes
 
 Approach 1: compare the neighbors, O(n), O(1)
