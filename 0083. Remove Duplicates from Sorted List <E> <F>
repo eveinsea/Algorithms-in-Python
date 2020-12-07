@@ -28,15 +28,16 @@ class Solution:
     def deleteDuplicates(self, head: ListNode) -> ListNode:
         if not head or not head.next:
             return head
-        prev, curr = head, head.next
+        last, curr = head, head.next
+        
         while curr:
-            if curr.val == prev.val:
-                #remove the current node
+            if curr.val == last.val:
+                #remove the current node, last don't move
                 curr = curr.next
-                prev.next = curr
+                last.next = curr
             else:
-                #move forward
-                prev, curr = curr, curr.next
+                #last, curr move forward at the same time
+                last, curr = curr, curr.next
         return head
         
 *Idea II*
@@ -51,12 +52,12 @@ class Solution:
         
         dummy = ListNode()
         dummy.next = head
-        prev, curr = dummy, head
+        last, curr = dummy, head
         while curr:
             while curr and curr.next and curr.val == curr.next.val:
                 curr = curr.next
-            prev.next = curr
-            prev = curr
+            last.next = curr
+            last = curr
             curr = curr.next
         return dummy.next
         
