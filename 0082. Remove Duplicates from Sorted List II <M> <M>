@@ -1,0 +1,104 @@
+82. Remove Duplicates from Sorted List II <M> <M>
+
+Given a sorted linked list, delete all nodes that have duplicate numbers, leaving only 
+distinct numbers from the original list.
+Return the linked list sorted as well.
+
+Example 1:
+Input: 1->2->3->3->4->4->5
+Output: 1->2->5
+
+Example 2:
+Input: 1->1->1->2->3
+Output: 2->3
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+*Idea I*
+In a sorted linked list, simply compare the two adjacent nodes, we can find the duplicates.
+For the duplicates with the same value, we remove all nodes (leaving none). 
+That means, we will delete the target duplicated node eventually.
+Refer to LeetCode 83. Remove Duplicates from Sorted List, the only thing we need to implement,
+is to use a node as target during traversal and delete it at last.
+key point: head may be deleted, use dummy node to point the new head
+
+Approach 1: flag for target node, delete one by one, O(n), O(1)
+class Solution:
+    def deleteDuplicates(self, head: ListNode) -> ListNode:
+        if not head or not head.next:
+            return head
+            
+        dummy = ListNode()
+        dummy.next = head
+        last, prev, curr = dummy, head, head.next
+        duplicate = False
+        while curr:
+            if prev.val == curr.val:
+                duplicate = True
+                curr = curr.next 
+            elif duplicate:
+                last.next = curr
+                prev = curr
+                curr = curr.next
+                duplicate = False
+            else:
+                curr = curr.next
+                prev = prev.next
+                last = last.next
+        if duplicate:                    #when curr is None(tail) but flag is True
+            last.next = curr
+        return dummy.next
+        
+Approach 2: store target value, delete one by one, O(n), O(1)
+class Solution:
+    def deleteDuplicates(self, head: ListNode) -> ListNode:
+        if not head or not head.next:
+            return head
+        
+        dummy = ListNode()
+        dummy.next = head
+        target = None
+        last, curr = dummy, head
+        while curr:
+            if curr.val == target:
+                #remove current node
+                curr = curr.next
+                last.next = curr
+            else:
+                #update target
+                if last.next != curr:
+                    last = last.next
+                target = curr.val
+                curr = curr.next
+        return dummy.next
+        
+*Idea II*
+Refer to LeetCode 83. Remove Duplicates from Sorted List
+find the last node in the duplicates, connect the next node of it to the reserved linked list
+key point: head may be the duplicates, use dummy node to point to the new head
+
+Approach 3: compare neighbors, delete all duplicates in one loop, O(n), O(1)
+mix Approach 1 and Approach 2 in LeetCode 83
+class Solution:
+    def deleteDuplicates(self, head: ListNode) -> ListNode:
+        if not head or not head.next:
+            return head
+        dummy = ListNode()
+        dummy.next = head
+        last, curr = dummy, head
+        while curr and curr.next:
+            if curr.val == curr.next.val:
+                while curr and curr.next and curr.val == curr.next.val:
+                    curr = curr.next
+                last.next = curr.next
+                curr = curr.next
+            else:
+                curr = curr.next
+                last = last.next
+        return dummy.next
