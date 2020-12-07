@@ -18,12 +18,12 @@ Output: 1->2->3
 
 ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 
-*Idea*
+*Idea I*
 In a sorted linked list, simply compare the two adjacent nodes, we can find the duplicates.
 For the duplicates with the same value, we reserve one node and remove all other nodes. 
 That means, we can delete the latter node when we find two duplicated nodes
 
-Approach 1: compare the neighbors, O(n), O(1)
+Approach 1: compare the neighbors, delete one by one, O(n), O(1)
 class Solution:
     def deleteDuplicates(self, head: ListNode) -> ListNode:
         if not head or not head.next:
@@ -38,3 +38,25 @@ class Solution:
                 #move forward
                 prev, curr = curr, curr.next
         return head
+        
+*Idea II*
+find the last node in the duplicates, connect it to the reserved linked list
+key point: head may be the duplicates, use dummy node to point to the new head
+
+Approach 2: compare neighbors, delete all duplicates in one loop, O(n), O(1)
+class Solution:
+    def deleteDuplicates(self, head: ListNode) -> ListNode:
+        if not head or not head.next:
+            return head
+        
+        dummy = ListNode()
+        dummy.next = head
+        prev, curr = dummy, head
+        while curr:
+            while curr and curr.next and curr.val == curr.next.val:
+                curr = curr.next
+            prev.next = curr
+            prev = curr
+            curr = curr.next
+        return dummy.next
+        
