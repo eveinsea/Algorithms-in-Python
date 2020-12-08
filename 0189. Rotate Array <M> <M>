@@ -1,0 +1,114 @@
+189. Rotate Array <M> <M>
+
+Given an array, rotate the array to the right by k steps, where k is non-negative.
+
+Follow up:
+Try to come up as many solutions as you can, there are at least 3 different ways to solve this problem.
+Could you do it in-place with O(1) extra space?
+ 
+Example 1:
+Input: nums = [1,2,3,4,5,6,7], k = 3
+Output: [5,6,7,1,2,3,4]
+Explanation:
+rotate 1 steps to the right: [7,1,2,3,4,5,6]
+rotate 2 steps to the right: [6,7,1,2,3,4,5]
+rotate 3 steps to the right: [5,6,7,1,2,3,4]
+
+Example 2:
+Input: nums = [-1,-100,3,99], k = 2
+Output: [3,99,-1,-100]
+Explanation: 
+rotate 1 steps to the right: [99,-1,-100,3]
+rotate 2 steps to the right: [3,99,-1,-100] 
+
+Constraints:
+1 <= nums.length <= 2 * 10^4
+-2^31 <= nums[i] <= 2^31 - 1
+0 <= k <= 10^5
+
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+Hidden:
+rotate in place
+
+*Idea I*
+Refer to LeetCode 61. Rotate List
+split the array into nums[: -k] and nums[-k:] and re-connect them after swap
+notice k %= n will speed up the processing
+
+Approach 1: slice, O(n), O(n), 68ms, 21.92%
+class Solution:
+    def rotate(self, nums: List[int], k: int) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        if not nums or not k:
+            return
+        
+        n = len(nums)
+        k %= n
+        nums[:] = nums[-k:] + nums[: -k]
+        
+*Idea II*
+We know the new location for each item after k rotatinos, it's idx + k % n
+If there is an extra array, we can put them in the right position easily
+But without the extra array, how to deal with them?
+Key point: rotate all items
+
+Approach 2: rotate one by one, O(n), O(1)
+class Solution:
+    def rotate(self, nums: List[int], k: int) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        if not nums or not k:
+            return
+        
+        n = len(nums)       #the number of items which will be rotated
+        start = 0
+        count = 0
+        while count < n:
+            currPos = start
+            currVal = nums[start]
+            while True:
+                nextPos = (currPos + k) % n             # % n
+                nums[nextPos], currVal = currVal, nums[nextPos]
+                currPos = nextPos
+                count += 1
+                if currPos == start:
+                    break
+            start += 1
+            
+*Idea III*
+Here is an interesting observation --
+            [1,2,3,4,5,6,7]
+reverse 1:  [7,6,5,4,3,2,1]
+reverse 2:  [5,6,7,|4,3,2,1]
+reverse 3:  [5,6,7,|1,2,3,4]
+When we rotate an array along forward direction k steps, it has the same result to the operations:
+(1) reverse the whole array
+(2) reverse the subarray consisting of first k items
+(3) reverse the subarray consisting of the rest n - k items
+Here k = k%n, the equivalant step number
+Could you reverse an array without extra space?
+
+Approach 3: reverse + swap, O(n), O(1)
+class Solution:
+    def rotate(self, nums: List[int], k: int) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        if not nums or not k:
+            return
+        
+        n = len(nums)
+        k %= n
+        self.reverseArray(nums, 0, n - 1)
+        self.reverseArray(nums, 0, k - 1)
+        self.reverseArray(nums, k, n - 1)
+        
+    def reverseArray(self, nums, left, right):
+        while left < right:
+            nums[left], nums[right] = nums[right], nums[left]
+            left += 1
+            right -= 1
