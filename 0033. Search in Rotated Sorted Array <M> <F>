@@ -1,0 +1,120 @@
+33. Search in Rotated Sorted Array <M> <F>
+
+You are given an integer array nums sorted in ascending order, and an integer target.
+Suppose that nums is rotated at some pivot unknown to you beforehand (i.e., [0,1,2,4,5,6,7] 
+might become [4,5,6,7,0,1,2]).
+If target is found in the array return its index, otherwise, return -1. 
+
+Example 1:
+Input: nums = [4,5,6,7,0,1,2], target = 0
+Output: 4
+
+Example 2:
+Input: nums = [4,5,6,7,0,1,2], target = 3
+Output: -1
+
+Example 3:
+Input: nums = [1], target = 0
+Output: -1
+ 
+Constraints:
+1 <= nums.length <= 5000
+-10^4 <= nums[i] <= 10^4
+All values of nums are unique.
+nums is guranteed to be rotated at some pivot.
+-10^4 <= target <= 10^4
+
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+*Idea I*
+If we know where is the pivot, we can split the array into two sorted array
+find the possible subarray which contains target value (no duplicates, so only one subarray is qualified)
+use binary search to find target if exists, otherwise return -1
+key point: how to find the pivot efficiently?
+generally, it costs O(n) to find max, or pivot point
+
+Approach 1: binary search + pivot, O(lgn), O(1)
+class Solution:
+    def search(self, nums: List[int], target: int) -> int:
+        if not nums:
+            return -1
+        if len(nums) == 1:                            #except case
+            return 0 if nums[0] == target else -1
+        
+        idx = self.findRotatePoint(nums)
+        if idx == 0 or target < nums[0]:
+            return self.binarySearch(nums, idx, len(nums) - 1, target) 
+        else:
+            return self.binarySearch(nums, 0, idx - 1, target)
+        
+    #can not be used for the sorted array
+    def findRotatePoint(self, nums):
+        if nums[0] <= nums[-1]:                     #excepted case, no pivot
+            return 0
+        left, right = 0, len(nums) - 1
+        while left <= right:
+            mid = left + (right - left) // 2
+            if nums[mid] > nums[mid + 1]:           #there must exist a pivot in the array
+                return mid + 1
+            if nums[mid] >= nums[left]:
+                left = mid + 1
+            else:
+                right = mid - 1
+        return 0
+    
+    def binarySearch(self, nums, left, right, target):
+        while left <= right:
+            mid = left + (right - left) // 2
+            if nums[mid] == target:
+                return mid
+            elif nums[mid] < target:
+                left = mid + 1
+            else:
+                right = mid - 1
+        return -1
+        
+*Idea II*
+Recall the idea of binary search, it primarily help reduce the search space with 50% each time
+(1) choose the half subarray which must contain target, or
+(2) discard the half subarray which must not contain target
+If we use binary search on the rotated sorted array, may we cut half subarray?
+      7
+    6 |
+  5   |
+4     |
+      |      2
+      |    1
+      |  0
+      |
+     mid
+According to the relationship between nums[0], nums[mid] and nums[-1], we can determine which half
+is sorted and the other one is not.
+nums[0] <= nums[mid] ==> sorted; otherwise, unsorted
+nums[mid] <= nums[-1] ==> sorted; otherwise, unsorted
+for the sorted part, it's easy to determine if we should choose or discard it (choose the unsorted part);
+for the other part, we'll continue to binary search on it if we choose it
+
+Approach 2: binary search, O(lgn), O(1)
+class Solution:
+    def search(self, nums: List[int], target: int) -> int:
+        if not nums:
+            return -1
+        
+        left, right = 0, len(nums) - 1
+        while left <= right:
+            mid = left + (right - left) // 2
+            
+            if nums[mid] == target:
+                return mid
+                
+            if nums[left] <= nums[mid]:                 #left half is sorted
+                if nums[left] <= target < nums[mid]:
+                    right = mid - 1
+                else:
+                    left = mid + 1
+            else:                                       #right half is sorted
+                if nums[mid] < target <= nums[right]:
+                    left = mid + 1
+                else:
+                    right = mid - 1
+        return -1
