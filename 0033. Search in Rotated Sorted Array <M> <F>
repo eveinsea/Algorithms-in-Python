@@ -38,8 +38,6 @@ class Solution:
     def search(self, nums: List[int], target: int) -> int:
         if not nums:
             return -1
-        if len(nums) == 1:                            #except case
-            return 0 if nums[0] == target else -1
         
         idx = self.findRotatePoint(nums)
         if idx == 0 or target < nums[0]:
@@ -47,14 +45,11 @@ class Solution:
         else:
             return self.binarySearch(nums, 0, idx - 1, target)
         
-    #can not be used for the sorted array
     def findRotatePoint(self, nums):
-        if nums[0] <= nums[-1]:                     #excepted case, no pivot
-            return 0
         left, right = 0, len(nums) - 1
         while left <= right:
             mid = left + (right - left) // 2
-            if nums[mid] > nums[mid + 1]:           #there must exist a pivot in the array
+            if mid < len(nums) - 1 and nums[mid] > nums[mid + 1]:
                 return mid + 1
             if nums[mid] >= nums[left]:
                 left = mid + 1
