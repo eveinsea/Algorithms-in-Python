@@ -1,0 +1,122 @@
+152. Maximum Product Subarray <M> <F>
+
+Given an integer array nums, find the contiguous subarray within an array (containing at least 
+one number) which has the largest product.
+
+Example 1:
+Input: [2,3,-2,4]
+Output: 6
+Explanation: [2,3] has the largest product 6.
+
+Example 2:
+Input: [-2,0,-1]
+Output: 0
+Explanation: The result cannot be 2, because [-2,-1] is not a subarray.
+
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+*Idea I*
+Refer to LeetCode 53. Maximum Subarray
+We can find every subarray, calculate the product and choose the max of product, it will cost O(n^2)
+PrefixSum-like method can't worke here because the prefixProduct may be 0.
+
+Approach 1: culmulative product, O(n^2), O(1)
+class Solution:
+    def maxProduct(self, nums: List[int]) -> int:
+        if not nums:
+            return 0
+        n = len(nums)
+        maxProduct = float('-inf')
+        for i in range(n):
+            product = 1
+            for j in range(i, n):
+                product *= nums[j]
+                maxProduct = max(maxProduct, product)
+        return maxProduct
+        
+*Idea II*  
+Thinking about the approaches which can optimize the inner loop -- find the max product of subarray 
+which end with the same point
+
+Approach 2: DP + running variables, O(n), O(1)
+DP, may we conclude DP(i) from DP(0), ..., DP(i - 1)?
+If DP(i) represent the max culmulative product of subarrays which end with nums[i], then
+(1)when nums[i] > 0, DP(i) = max(DP_max(i - 1) * nums[i], nums[i]) 
+(2)when nums[i] < 0, DP(i) = max(DP_min(i - 1) * nums[i], nums[i]) 
+(3)when nums[i] = 0, DP(i) = 0 
+We only use two previous statuses here -- DP_min and DP_max, so the 1D-array DP can be simplified into
+DP with running variables
+class Solution:
+    def maxProduct(self, nums: List[int]) -> int:
+        if not nums:
+            return 0
+        
+        n = len(nums)
+        prevMax = 1
+        prevMin = 1
+        maxProduct = float('-inf')
+        for num in nums:
+            if num > 0:
+                currMax = max(num, prevMax * num)
+                currMin = min(num, prevMin * num)
+            else:
+                currMax = max(num, prevMin * num)
+                currMin = min(num, prevMax * num)
+            maxProduct = max(maxProduct, currMax)
+            prevMax, prevMin = currMax, currMin
+        return maxProduct
+        
+Approach 3: Greedy, O(n), O(1)
+there may be negatives in the given array, so the on-going min or max product can contribute to the 
+global max product
+#minCurr, maxCurr means the min/max of current subarray ending with nums[i]
+class Solution:
+    def maxProduct(self, nums: List[int]) -> int:
+        if not nums:
+            return 0
+        maxProduct = float('-inf')
+        minCurr, maxCurr = 1, 1
+        for num in nums:
+            if num < 0:
+                minCurr, maxCurr = maxCurr, minCurr
+            minCurr = min(num, minCurr * num)
+            maxCurr = max(num, maxCurr * num)
+            maxProduct = max(maxProduct, maxCurr)
+        return maxProduct
+        
+*Idea III*
+Change our mind, if there are only positives or even negatives in an array, the max product must be the 
+longest subarray. So there are two conditions which make the product of subarray decreased:
+1. meet 0 --> reset caculator
+    If a subarray contains 0, its product must be 0. So we'll focus on other candidate subarrays without 0
+    That means, 0 split the array into two non-overlapping parts, we only need to calculate the product 
+    of them, compare them with 0 and pick the max one as the result of current subarray
+2. there is odd negative numbers inside --> scan from two directions
+    If we only multiply (x-1) negatives, x is the number of negatives, the result is positive and it may 
+    be the max product. Discarding which negative can help us get the max product? -- the negative must 
+    stand on one end of all negatives (subarray is continuous), and has the smallest absolute value
+    Without loss of generality, we use bidirectional scan.
+#   [-2,3,4,5,6]
+
+Approach 4: two directions scan, O(n), O(1)   
+class Solution:
+    def maxProduct(self, nums: List[int]) -> int:
+        if not nums:
+            return 0
+        
+        maxProduct = float('-inf')
+        product = 1
+        for i in range(len(nums)):
+            product *= nums[i]
+            maxProduct = max(maxProduct, product)
+            if nums[i] == 0:
+                product = 1
+        product = 1
+        for i in reversed(range(len(nums))):
+            product *= nums[i]
+            maxProduct = max(maxProduct, product)
+            if nums[i] == 0:
+                product = 1
+        
+        return maxProduct
+    
