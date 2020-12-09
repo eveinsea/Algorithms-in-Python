@@ -1,0 +1,168 @@
+53. Maximum Subarray <E> <F>
+
+Given an integer array nums, find the contiguous subarray (containing at least one number) 
+which has the largest sum and return its sum.
+
+Follow up: 
+If you have figured out the O(n) solution, try coding another solution using the divide and 
+conquer approach, which is more subtle. 
+
+Example 1:
+Input: nums = [-2,1,-3,4,-1,2,1,-5,4]
+Output: 6
+Explanation: [4,-1,2,1] has the largest sum = 6.
+
+Example 2:
+Input: nums = [1]
+Output: 1
+
+Example 3:
+Input: nums = [0]
+Output: 0
+
+Example 4:
+Input: nums = [-1]
+Output: -1
+
+Example 5:
+Input: nums = [-2147483647]
+Output: -2147483647
+ 
+Constraints:
+1 <= nums.length <= 2 * 10^4
+-2^31 <= nums[i] <= 2^31 - 1
+
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+Definition:
+Subarray: contiguous subset with the original order which contain at least one number
+
+*Idea*
+We have to find all subarrays and compare their sum
+(1) find all subarrays -- cost O(n^2)
+    (a)use a sliding window (length = 1, 2, ..., n)
+    (b)fix one end and find all subarrays with this end, and then move this end
+(2) calculate the sum of each subarray -- cost O(1)
+    (a)cumulative sum up
+    (b)prefixSum with O(n) space
+(3) find the global max of sum -- cost O(1) best
+    (a) running update during step (2)
+    (b) max(sum_subarray), another O(n) pass
+    
+Approach 1: cumulative sum, O(n^2), O(1)
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+        if not nums:
+            return 0
+        
+        n = len(nums)
+        maxSum = float('-inf')
+        for i in range(n):
+            total = 0
+            for j in range(i, n):
+                total += nums[j]
+                maxSum = max(maxSum, total)
+        return maxSum
+        
+Approach 2: prefixSum, O(n^2), O(n)
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+        if not nums:
+            return 0
+        
+        n = len(nums)
+        prefixSum = [0] * (n + 1)
+        for i in range(n):
+            prefixSum[i + 1] = prefixSum[i] + nums[i]
+        
+        maxSum = float('-inf')
+        for i in range(1, n + 1):
+            for j in range(i):
+                maxSum = max(maxSum, prefixSum[i] - prefixSum[j])
+        return maxSum
+        
+*Idea II*
+optimize an algorithm with O(n^2) time complexity, we can try two directions:
+(1) optimize outer loop, use a more efficient approach to scan an array with n items 
+    ==> divide and conquer is a choice, O(lgn)
+
+Approach 3: Divide and Conquer, O(nlgn), O(lgn)
+#key point: mid works as the fixed point in midSubArray()
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+        return self.subArrayHelper(nums, 0, len(nums) - 1)
+    
+    def subArrayHelper(self, nums, left, right):
+        if left == right:
+            return nums[left]
+        
+        mid = left + (right - left) // 2
+        leftSum = self.subArrayHelper(nums, left, mid)
+        rightSum = self.subArrayHelper(nums, mid + 1, right)
+        midSum = self.midSubArray(nums, left, right, mid)
+        return max(leftSum, rightSum, midSum)
+    
+    def midSubArray(self, nums, left, right, mid):
+        leftMax = float('-inf')
+        currSum = 0
+        for i in reversed(range(left, mid + 1)):
+            currSum += nums[i]
+            leftMax = max(currSum, leftMax)
+        rightMax = float('-inf')
+        currSum = 0
+        for i in range(mid, right + 1):
+            currSum += nums[i]
+            rightMax = max(currSum, rightMax)
+        return leftMax + rightMax - nums[mid]
+
+*Idea III*
+optimize an algorithm with O(n^2) time complexity, we can try two directions:
+(2) optimize inner loop, use a more efficient approach to find the max sum of subarrays 
+    which have a same end point
+    (a) ==> DP, O(1)
+    (b) ==> Greedy, O(1)
+    
+Approach 4: DP + 1D-array, O(n), O(n)
+#DP[i] store the max sum of subarrays which end with nums[i - 1]
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+        if not nums:
+            return 0
+        
+        n = len(nums)
+        DP = [float('-inf')] * (n + 1)
+        maxSum = float('-inf')
+        for i in range(1, n + 1):
+            DP[i] = max(DP[i - 1] + nums[i - 1], nums[i - 1])
+            maxSum = max(maxSum, DP[i])
+        return maxSum       
+
+Approach 5: DP + running variable, O(n), O(1)
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+        if not nums:
+            return 0
+        
+        n = len(nums)
+        prevSum = float('-inf')
+        maxSum = float('-inf')
+        for num in nums:
+            currSum = max(prevSum + num, num)
+            maxSum = max(maxSum, currSum)
+            prevSum = currSum
+        return maxSum
+        
+Approach 6: Greedy, O(n), O(1)
+#Add items one by one from left to right, if the accumulated sum is negative, round it 
+down (consider the current value only), otherwise continue to add next items
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+        if not nums:
+            return 0
+        
+        maxSum = float('-inf')
+        subtotal = 0
+        for num in nums:
+            subtotal = max(subtotal + num, num)
+            maxSum = max(maxSum, subtotal)
+        return maxSum    
