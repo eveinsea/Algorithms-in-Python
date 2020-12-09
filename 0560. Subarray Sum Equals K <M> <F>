@@ -1,0 +1,77 @@
+560. Subarray Sum Equals K <M> <F>
+
+Given an array of integers nums and an integer k, return the total number of continuous subarrays 
+whose sum equals to k. 
+
+Example 1:
+Input: nums = [1,1,1], k = 2
+Output: 2
+
+Example 2:
+Input: nums = [1,2,3], k = 3
+Output: 2
+ 
+Constraints:
+1 <= nums.length <= 2 * 10^4
+-1000 <= nums[i] <= 1000
+-10^7 <= k <= 10^7
+
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+*Idea I*
+Refer to LeetCode 53. Maximum Subarray
+Find all subarrays, compare their sum, find the subarrays with sum of k and count them
+It will cost O(n^2)
+
+Approach 1: prefixSum + counting, O(n^2), O(n)
+#fix the end point
+class Solution:
+    def subarraySum(self, nums: List[int], k: int) -> int:
+        n = len(nums)
+        prefixSum = [0] * (n + 1)
+        for i in range(n):
+            prefixSum[i + 1] = prefixSum[i] + nums[i]
+        count = 0
+        for i in range(n + 1):
+            for j in range(i):
+                if prefixSum[i] - prefixSum[j] == k:
+                    count += 1
+        return count
+
+Approach 2: cumulative sum + counting, O(n^2), O(1)
+#fix the start point
+class Solution:
+    def subarraySum(self, nums: List[int], k: int) -> int:
+        n = len(nums)
+        count = 0
+        for i in range(n):
+            total = 0
+            for j in range(i, n):
+                total += nums[j]
+                if total == k:
+                    count += 1
+        return count
+        
+*Idea II*
+Think about optimizing the inner loop, how to efficiently find the subarrays with sum of k 
+which start or end with the same point?
+DP can't work here because we can't conclude DP(i) from some specific previous statuses of DP
+Combined with prefixSum, sum(subarray[i...j]) = prefixSum[j] - prefixSum[i] = k
+That means, we only need to find two numbers in prefixSum array, which difference equals to k
+Refer to LeetCode 1. Two Sum, it costs O(1) with hashset
+So we have a O(n) approach with a pre-calculated prefixSum array in hashmap
+
+Approach 3: prefixSum + two sum + counting, hashmap, O(n), O(n)
+from collections import defaultdict
+class Solution:
+    def subarraySum(self, nums: List[int], k: int) -> int:
+        count = 0
+        hm = defaultdict(int)           #{prefixSum: count}
+        prefixSum = 0       
+        hm[prefixSum] = 1               #initiate, put prefixSum[0] = 0 in hashmap
+        for num in nums:
+            prefixSum += num
+            if prefixSum - k in hm:
+                count += hm[prefixSum - k]
+            hm[prefixSum] += 1
+        return count
