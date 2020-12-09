@@ -37,8 +37,8 @@ Constraints:
 Definition:
 Subarray: contiguous subset with the original order which contain at least one number
 
-*Idea*
-We have to find all subarrays and compare their sum
+*Idea I*
+Find all subarrays, compare their sum and choose the global max
 (1) find all subarrays -- cost O(n^2)
     (a)use a sliding window (length = 1, 2, ..., n)
     (b)fix one end and find all subarrays with this end, and then move this end
