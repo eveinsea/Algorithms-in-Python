@@ -1,0 +1,156 @@
+300. Longest Increasing Subsequence <M> <M>
+
+Given an integer array nums, return the length of the longest strictly increasing subsequence.
+
+A subsequence is a sequence that can be derived from an array by deleting some or no elements 
+without changing the order of the remaining elements. For example, [3,6,2,7] is a subsequence 
+of the array [0,3,1,6,2,2,7]. 
+
+Example 1:
+Input: nums = [10,9,2,5,3,7,101,18]
+Output: 4
+Explanation: The longest increasing subsequence is [2,3,7,101], therefore the length is 4.
+
+Example 2:
+Input: nums = [0,1,0,3,2,3]
+Output: 4
+
+Example 3:
+Input: nums = [7,7,7,7,7,7,7]
+Output: 1
+ 
+Constraints:
+1 <= nums.length <= 2500
+-10^4 <= nums[i] <= 10^4 
+
+Follow up:
+Could you come up with the O(n^2) solution?
+Could you improve it to O(n log(n)) time complexity?
+
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+Key points:
+#strictly increasing subsequence
+
+Hidden
+#length constraint? --> 1
+
+*Idea I*
+Find all increasing subsequence, choose the LIS, then we get the length of LIS
+strictly increasing subsequence, so duplicates don't matter here
+We can use three methods to find all increasing subsequence:
+(1) backtracking/DFS location by location
+(2) backtracking/DFS item by item
+(3) BFS level by level
+Notice the difference between (1) and (2) --
+In (1), subsequence may end at any location, rather than at the end of array
+In (2), subsequence must end at the end of array
+
+Approach 1: backtracking/DFS(loc by loc) + increasing + (deduplication/hashset), O(2^n), O(n)
+#Refer to LeetCode 491. Increasing Subsequences
+#may terminate before it arrive the end of array, so update self.longest each recursion
+#only use last item and length of current subsequence as input
+class Solution:
+    def lengthOfLIS(self, nums: List[int]) -> int:
+        self.longest = 0
+        self.LISHelper(nums, 0, None, 0)
+        return self.longest
+    
+    def LISHelper(self, nums, idx, last, length):
+        self.longest = max(self.longest, length)    #update in each recursion
+        
+        hs = set()
+        for i in range(idx, len(nums)):
+            if nums[i] in hs:
+                continue
+            hs.add(nums[i])
+            if not last or nums[i] > last:
+                self.LISHelper(nums, i + 1, nums[i], length + 1)
+
+Approach 2: backtracking/DFS(item by item) + increasing, O(2^n), O(n)
+#for each item, it may be contained in the eventual subsequence or not 
+#it must arrive at the end of the array, update self.longest at the end
+#no deduplication operation
+class Solution:
+    def lengthOfLIS(self, nums: List[int]) -> int:
+        self.longest = 0
+        self.LISHelper(nums, 0, None, 0)
+        return self.longest
+    
+    def LISHelper(self, nums, idx, last, length):
+        if idx == len(nums):
+            self.longest = max(self.longest, length)    #update at the end
+            return
+        
+        if not last or nums[idx] > last:
+            self.LISHelper(nums, idx + 1, nums[idx], length + 1)
+        self.LISHelper(nums, idx + 1, last, length)
+        
+*Idea II*
+Think of the increasing process of a subsequence, if one item can be appended to the subsequence, 
+the length of it will plus 1. for a specific item, if we know the length of LIS in front of it,
+and we can ensure the specific item can be added to the LIS, we obtain a new LIS with length + 1
+
+Approach 3: DP + 1D-array, O(n^2), O(n)
+#DP[i] represent the length of LIS which ends with nums[i]
+class Solution:
+    def lengthOfLIS(self, nums: List[int]) -> int:
+        if not nums:
+            return 0
+        
+        n = len(nums)
+        DP = [1] * n
+        longest = 1
+        for i in range(n):
+            for j in range(i):
+                if nums[i] > nums[j]:
+                    DP[i] = max(DP[i], 1 + DP[j])
+                    longest = max(longest, DP[i])
+        return longest
+        
+*Idea III*
+Change our mind, we don't care about what the LIS is, and how many LIS we have, we only want to 
+know the longest length of LIS.
+Maintain a sorted array/increasing subsequence consisting of smallest item, 
+every time when we find a smaller item, replace the corresponding item in the sorted array;
+otherwise, append it to the sorted array. Then the length of the array tells us the result.
+
+#Greedy/binary search, O(nlgn), O(n)
+class Solution:
+    def lengthOfLIS(self, nums: List[int]) -> int:
+        if not nums:
+            return 0
+        
+        n = len(nums)
+        subseq = []
+        for num in nums:            
+            idx = self.binarySearch(subseq, num)
+            if idx == len(subseq):
+                subseq.append(num)
+            else:
+                subseq[idx] = num
+        return len(subseq)
+    
+    def binarySearch(self, nums, target):
+        if not nums:
+            return 0
+        if len(nums) == 1:
+            return 0 if nums[0] >= target else 1
+        
+        left, right = 0, len(nums) - 1
+        while left < right - 1:
+            mid = left + (right - left) // 2
+            if nums[mid] == target:
+                return mid
+            elif nums[mid] < target:
+                left = mid
+            else:
+                right = mid
+        
+        if nums[left] >= target:
+            return left
+        elif nums[right] < target:
+            return right + 1
+        else:
+            return right
+                
