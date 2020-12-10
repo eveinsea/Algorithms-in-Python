@@ -1,0 +1,83 @@
+491. Increasing Subsequences <M> <S>
+
+Given an integer array, your task is to find all the different possible increasing subsequences 
+of the given array, and the length of an increasing subsequence should be at least 2. 
+
+Example:
+Input: [4, 6, 7, 7]
+Output: [[4, 6], [4, 7], [4, 6, 7], [4, 6, 7, 7], [6, 7], [6, 7, 7], [7,7], [4,7,7]]
+ 
+Constraints:
+The length of the given array will not exceed 15.
+The range of integer in the given array is [-100,100].
+The given array may contain duplicates, and two equal integers should also be considered as a 
+special case of increasing sequence.
+
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+Key points:
+#may contain duplicates
+#two equal integers should also be considered as a special case of increasing sequence
+#the length of an increasing subsequence should be at least 2
+
+Definition:
+A subsequence is a sequence that can be derived from an array by deleting some or no elements 
+without changing the order of the remaining elements. For example, [3,6,2,7] is a subsequence 
+of the array [0,3,1,6,2,2,7].
+#keep the original order
+#unsorted and no sorting allowed
+
+*Idea I*
+Refer to LeetCode 90. Subsets II, we can find all subsets from an array with duplicates
+Add our new constraints: increasing, we can generate all increasing subset/subsequence
+Notice the array is unsorted, we can't discard duplicates when we pick the item for a specific location
+How to effeciently find the duplicates in current remained subarray? Hashset!
+
+Approach 1: DFS/backtracking/subset + increasing + hashset/deduplication, O(n * 2^n), O(n)
+#backtracking, choose item for specific location, one by one
+#record every qualified subset/subsequence, rather than update self.ans at the end of the array
+#key point: keep path is unique after each recursion
+#           find duplicate in the unsorted array with hashset before new subsequence generated
+class Solution:
+    def findSubsequences(self, nums: List[int]) -> List[List[int]]:
+        self.ans = []
+        self.increasingSeqHelper(nums, 0, [])
+        return self.ans
+    
+    def increasingSeqHelper(self, nums, idx, path):
+        if len(path) >= 2:
+            self.ans.append(path[:])
+            
+        visited = set()
+        for i in range(idx, len(nums)):
+            if nums[i] in visited:
+                continue
+            visited.add(nums[i])
+            
+            if not path or nums[i] >= path[-1]:
+                self.increasingSeqHelper(nums, i + 1, path + [nums[i]])
+
+*Idea II*
+construct all subsets which are increasing, we can use BFS level by level
+notice process the duplicated subsets
+
+Approach 2: BFS + level/running array + hashset, O(n * 2^n), O(n * 2^n)
+#find duplicate in the unsorted array with hashset after new subsequence generated
+class Solution:
+    def findSubsequences(self, nums: List[int]) -> List[List[int]]:
+        if not nums:
+            return []
+        
+        dq = set([()])          #dp.add(())
+        for num in nums:
+            tmp = set()
+            for subseq in dq:
+                if not subseq or num >= subseq[-1]:
+                    tmp.add(tuple(list(subseq) + [num]))
+            dq |= tmp
+        
+        ans = []
+        for subseq in dq:
+            if len(subseq) >= 2:
+                ans.append(list(subseq))
+        return ans
