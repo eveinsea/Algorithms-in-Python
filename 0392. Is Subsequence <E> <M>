@@ -1,0 +1,174 @@
+392. Is Subsequence <E> <M>
+
+Given a string s and a string t, check if s is subsequence of t.
+
+A subsequence of a string is a new string which is formed from the original string by deleting 
+some (can be none) of the characters without disturbing the relative positions of the remaining 
+characters. (ie, "ace" is a subsequence of "abcde" while "aec" is not).
+
+Follow up:
+If there are lots of incoming S, say S1, S2, ... , Sk where k >= 1B, and you want to check one 
+by one to see if T has its subsequence. In this scenario, how would you change your code? 
+
+Example 1:
+Input: s = "abc", t = "ahbgdc"
+Output: true
+
+Example 2:
+Input: s = "axc", t = "ahbgdc"
+Output: false 
+
+Constraints:
+0 <= s.length <= 100
+0 <= t.length <= 10^4
+Both strings consists only of lowercase characters.
+
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+*Idea I*
+Subsequence keeps the original relative order, but may not be continuous in location
+s: a b  c
+t: ahbgdc
+observe the aboove example, if s is a subsequence of t, delete the unmatched characters in t, the 
+remained subsequence should be equal to s
+If existing duplicates, pick the first one then we can have more opportunities to match
+
+Approach 1: Greedy/two pointers, O(n), O(1)
+#n is the length of t
+class Solution:
+    def isSubsequence(self, s: str, t: str) -> bool:
+        ps, pt = 0, 0
+        while ps < len(s) and pt < len(t):
+            if s[ps] == t[pt]:
+                ps += 1
+                pt += 1
+            else:
+                pt += 1
+        return ps == len(s)
+        
+*Idea II*
+Think about the senario when we have checked s[i+1:] and t[j+1:] and pairs after that, the status is 
+True/False which represents s[i+1:] is subsequence of t[j+1:] or not. Now we can determine the status 
+of s[i:] and t[j:]:
+if s[i] == t[j], we have the same result to the status of s[i+1:] and t[j+1:]
+otherwise, we have the same result to the status of s[i:] and t[j+1:]
+
+Approach 2: DFS/divide and conquer, O(n), O(n)
+class Solution:
+    def isSubsequence(self, s: str, t: str) -> bool:
+        return self.isSubseqHelper(s, t, 0, 0)
+    
+    def isSubseqHelper(self, s, t, ps, pt):
+        if ps == len(s):
+            return True
+        if pt == len(t):
+            return False
+        if s[ps] == t[pt]:
+            return self.isSubseqHelper(s, t, ps + 1, pt + 1)
+        else:
+            return self.isSubseqHelper(s, t, ps, pt + 1)
+                        
+Approach 3: DP + 2D array, O(mn), O(mn)
+#derived from Approach 2 + caching
+#DP[i][j] store the status (is subsequence or not) of s[i:] and t[j:]
+#key point: dp[m][j] = True (when s is Null, s is subsequence of t)
+class Solution:
+    def isSubsequence(self, s: str, t: str) -> bool:
+        m, n = len(s), len(t)
+        dp = [[False] * (n + 1) for _ in range(m + 1)]
+        for j in range(n + 1):
+            dp[m][j] = True
+        for i in reversed(range(m)):
+            for j in reversed(range(n)):
+                if s[i] == t[j]:
+                    dp[i][j] = dp[i + 1][j + 1]
+                else:
+                    dp[i][j] = dp[i][j + 1]
+        return dp[0][0]
+
+Approach 4: DP + 2D array, O(mn), O(mn)
+#DP[i][j] store the maximal number of matched character between s[:i] and t[:j]
+class Solution:
+    def isSubsequence(self, s: str, t: str) -> bool:
+        m, n = len(s), len(t)
+        dp = [[0] * (n + 1) for _ in range(m + 1)]
+        for j in range(1, n + 1):
+            for i in range(1, m + 1):
+                if s[i - 1] == t[j - 1]:
+                    dp[i][j] = dp[i - 1][j - 1] + 1
+                else:
+                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+        return dp[-1][-1] == m
+        
+Approach 5: DP + 1D array, O(mn), O(n)
+class Solution:
+    def isSubsequence(self, s: str, t: str) -> bool:
+        m, n = len(s), len(t)
+        dp = [0] * (n + 1)
+        for i in range(1, m + 1):
+            tmp = [0] * (n + 1)
+            for j in range(1, n + 1):
+                if s[i - 1] == t[j - 1]:
+                    tmp[j] = dp[j - 1] + 1
+                else:
+                    tmp[j] = max(dp[j], tmp[j - 1])
+            dp = tmp
+        return dp[-1] == m       
+        
+#Follow up:
+#If there are lots of incoming S, say S1, S2, ... , Sk where k >= 1B, and you want to check one by 
+one to see if T has its subsequence. In this scenario, how would you change your code?      
+
+*Idea III*
+There is a extreme X which makes the cost become O(X*n), n is the best time complexity in our solutions
+Let's try to find a more efficient method which can reduce O(n)
+we can preprocess the string t, use a hashmap to store the information {c: [idx]} for each character in t
+when we check the character in s one by one, we can find the possible locations of matched character with O(1)
+To keep the relative order with s, we choose the first character with a bigger index than current index we recorded
+Because we generated the list of [idx] according to traversal order, [idx] is a sorted array
+Find the first value larger than target from a sorted array, binary search is a good choice with cost of O(lgn)
+
+Approach 6: hashmap + index comparation + binary search, O(n + mlgn), O(n)
+#O(X*n) > O(n + X*mlgn)
+#think about duplicates
+#pick the idx as small as possible to match, find the first matched character with index > curr
+from collections import defaultdict
+class Solution:
+    def isSubsequence(self, s: str, t: str) -> bool:
+        hm = defaultdict(list)
+        for idx, val in enumerate(t):
+            hm[val].append(idx)
+        
+        curr = -1
+        for c in s:
+            if c in hm:
+                #idx = bisect.bisest_right(hm[c], curr)
+                idx = self.binarySearch(hm[c], curr)
+                if idx == -1:
+                    return False
+                else:
+                    curr = hm[c][idx]
+            else:
+                return False
+        return True
+    
+    def binarySearch(self, nums, target):
+        if not nums:
+            return -1
+        if len(nums) == 0:
+            return 0 if nums[0] > target else -1
+        
+        left, right = 0, len(nums) - 1
+        while left < right - 1:
+            mid = left + (right - left) // 2
+            if nums[mid] <= target:
+                left = mid + 1
+            else:
+                right = mid
+        
+        if nums[left] > target:
+            return left
+        elif nums[right] <= target:
+            return -1
+        else:
+            return right
