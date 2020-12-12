@@ -23,11 +23,11 @@ Constraints:
 
 *Idea I*
 (1)find all subarray --> (2)find min_val of each subarray --> (3)sum()
-(1)prefixSum can find all subarray with cost O(n^2)
+(1)make use of start and end point to determine a subarray, we can find all subarray with cost O(n^2)
 (2)if we extend the subarray with a fixed end point, we can cumulate the min_val with O(1)
 (3)cumulate sum during the above processing
 
-Approach 1: PrefixSum + cumulative min + cumulative sum, O(n^2), O(1), TLE
+Approach 1: brute force/start & end point + cumulative min + cumulative sum, O(n^2), O(1), TLE
 #fix a end point and try to find all possible subarray with it, then next end point, and so on
 class Solution:
     def sumSubarrayMins(self, A: List[int]) -> int:
