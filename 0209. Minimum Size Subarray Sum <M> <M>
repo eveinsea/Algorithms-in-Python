@@ -1,0 +1,105 @@
+209. Minimum Size Subarray Sum <M> <M>
+
+Given an array of n positive integers and a positive integer s, find the minimal length of a contiguous subarray 
+of which the sum ≥ s. If there isn't one, return 0 instead.
+
+Example: 
+Input: s = 7, nums = [2,3,1,2,4,3]
+Output: 2
+Explanation: the subarray [4,3] has the minimal length under the problem constraint.
+
+Follow up:
+If you have figured out the O(n) solution, try coding another solution of which the time complexity is O(n log n). 
+
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+*Idea I*
+find all subarrays, filter them with sum >= s, and find the minimal length of the candidate subarrays
+make use of start and end point, we can determine a subarray, which cost O(n^2) totally
+
+Approach 1: brute force/start & end point + cumulative sum, O(n^2), O(n), TLE
+class Solution:
+    def minSubArrayLen(self, s: int, nums: List[int]) -> int:
+        if not nums:
+            return 0
+        
+        n = len(nums)
+        min_length = float('inf')
+        for i in range(n):
+            total = 0
+            for j in range(i, n):
+                total += nums[j]
+                if total >= s:
+                    min_length = min(min_length, j - i + 1)
+        return min_length if min_length != float('inf') else 0
+        
+*Idea II*
+notice the input is an array of n positive integers, the prefixSum array will be an increasing sequence
+if there is a prefixSum[j] which makes prefixSum[i] - prefixSum[j] >= s, that means sum(subarray[j: i]) >= s
+how to find the j efficiently? 
+in an sorted array, find an item which is the rightmost one and less than target (prefixSum[i] - s),
+we use binary search with cost O(lgn)
+
+Approach 2: prefixSum + binary search, O(nlgn), O(n)
+#find the integer which is less than prefixSum[i] - s and has the maximal index
+class Solution:
+    def minSubArrayLen(self, s: int, nums: List[int]) -> int:
+        if not nums:
+            return 0
+        
+        n = len(nums)
+        ps = [0] * (n + 1)
+        for i in range(n):
+            ps[i + 1] = ps[i] + nums[i]
+            
+        min_length = float('inf')
+        for i in range(1, n + 1):
+            target = ps[i] - s
+            if target < 0:
+                continue
+            idx = self.binary_search(ps, target, 0, i - 1)
+            min_length = min(min_length, i - idx)
+        return min_length if min_length != float('inf') else 0
+    
+    def binary_search(self, nums, target, low, high):
+        if low == high:
+            return 0 if nums[0] <= target else -1
+        while low < high - 1:
+            mid = low + (high - low) // 2
+            if nums[mid] <= target:
+                low = mid
+            else:
+                high = mid - 1
+        if nums[high] <= target:
+            return high
+        elif nums[low] > target:
+            return -1
+        else:
+            return low
+
+*Idea III*
+notice the input is an array of n positive integers, so the sum will increase when we extend the subarray and 
+decrease when we shrink the subarray
+maintain a sliding window which ensure the sum of items inside is just greater than s
+that means, whenever the sum is greater than s, we shrink the window; otherwise, we extend the window
+give a direction to the extending and shrinking, the window will slide from one end to the other and we traverse
+all subarrays which possible contribute to the result
+
+Approach 3: sliding window/two pointers + cumulative sum, O(n), O(1)
+#key point: corner case, all sum(subarray) < s, return 0
+class Solution:
+    def minSubArrayLen(self, s: int, nums: List[int]) -> int:
+        if not nums:
+            return 0
+        
+        low, high = 0, 0
+        min_length = float('inf')
+        total = 0
+        while high < len(nums):
+            total += nums[high]
+            high += 1
+            while low <= high and total >= s:
+                min_length = min(min_length, high - low)
+                total -= nums[low]
+                low += 1
+        return min_length if min_length != float('inf') else 0
