@@ -1,0 +1,76 @@
+907. Sum of Subarray Minimums <M> <M>
+
+Given an array of integers A, find the sum of min(B), where B ranges over every (contiguous) subarray of A.
+Since the answer may be large, return the answer modulo 10^9 + 7. 
+
+Example 1:
+Input: arr = [3,1,2,4]
+Output: 17
+Explanation: 
+Subarrays are [3], [1], [2], [4], [3,1], [1,2], [2,4], [3,1,2], [1,2,4], [3,1,2,4]. 
+Minimums are 3, 1, 2, 4, 1, 1, 2, 1, 1, 1.
+Sum is 17.
+
+Example 2:
+Input: arr = [11,81,94,43,3]
+Output: 444 
+
+Constraints:
+1 <= arr.length <= 3 * 10^4
+1 <= arr[i] <= 3 * 10^4
+
+～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
+*Idea I*
+(1)find all subarray --> (2)find min_val of each subarray --> (3)sum()
+(1)prefixSum can find all subarray with cost O(n^2)
+(2)if we extend the subarray with a fixed end point, we can cumulate the min_val with O(1)
+(3)cumulate sum during the above processing
+
+Approach 1: PrefixSum + cumulative min + cumulative sum, O(n^2), O(1), TLE
+#fix a end point and try to find all possible subarray with it, then next end point, and so on
+class Solution:
+    def sumSubarrayMins(self, A: List[int]) -> int:
+        if not A:
+            return 0
+        
+        n = len(A)
+        total = 0
+        for i in range(n):
+            min_val = float('inf')
+            for j in range(i, n):
+                min_val = min(min_val, A[j])
+                total += min_val
+        return total % (10 ** 9 + 7)
+        
+*Idea II*
+change our mind, if we can find the frequency of an item, which is the number of subarrays with this item 
+and it's the min_val inside, the result = A[i] * freq(i)
+Let left(i) is the number of subarrays with A[i] as the rightmost end point and min_val
+Let right(i) is the number of subarrays with A[i] as the leftmost end point and min_val
+freq(i) = left(i) * right(i) according to probability theory -- P(X&Y) = P(X)*P(Y), X, Y are independent events
+How to find left(i)?
+We need to find the location of the nearest item in front of current item which is less than the current one.
+use a stack to maintain an increasing sequence of items, store index instead of value for distance calculation
+similar to left(i), implement right(i) with a stack where stack[-1] and new item work as current item and 
+its nearest right item which is less than the current one.
+Refer to https://leetcode.com/problems/sum-of-subarray-minimums/discuss/170750/C++JavaPython-Stack-Solution
+
+Approach 2: frequency + increasing stack, O(n), O(n)
+class Solution:
+    def sumSubarrayMins(self, A: List[int]) -> int:
+        if not A:
+            return 0
+        
+        A = [float('-inf')] + A + [float('-inf')]
+        n = len(A)
+        total = 0
+        stack = []          #store index
+        for i, num in enumerate(A):
+            while stack and A[stack[-1]] > num:
+                j = stack.pop()
+                k = stack[-1]
+                freq = (i - j) * (j - k)
+                total += A[j] * freq
+            stack.append(i)
+        return total % (10 ** 9 + 7)
