@@ -58,7 +58,7 @@ Whatever we want to do, find the nodes p and q in the tree fist.
 When we find them, we've collect the path info at the same time.
 Now the problem be converted to find the intersection of two linked list (must exist only one!)
       |--> p
-r --> i 
+r --> | 
       |--> q
 Recall Leetcode 160. Intersection of Two Linked Lists, after reversing the pointers, they're the same.
 We have three approaches to find the intersection in such two linked list -- 
